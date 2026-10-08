@@ -99,11 +99,3 @@ test('stream row', () => {
   assert.ok(s.description.includes('🇺🇸 PG'));
   assert.strictEqual(s.externalUrl, 'https://mdblist.com/movie/tt0073195');
 });
-
-test('chip links stay on the page by default, external when configured', () => {
-  const ours = (c) => decorateMeta(baseMeta, data, c).links.filter((l) => ['Ratings', 'Age Rating'].includes(l.category));
-  for (const l of ours(cfg())) assert.strictEqual(l.url, 'stremio:///detail/movie/tt0073195');
-  assert.ok(ours(cfg({ chipLinks: 'external' })).every((l) => l.url.startsWith('https://')));
-  // The IMDb badge always keeps its imdb.com link (Stremio opens that one in the browser).
-  assert.strictEqual(decorateMeta(baseMeta, data, cfg()).links[0].url, 'https://imdb.com/title/tt0073195');
-});

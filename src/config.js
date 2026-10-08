@@ -21,8 +21,6 @@ const DEFAULTS = Object.freeze({
   ageRatings: ['US'],          // ISO-3166 country codes; [] disables age ratings
   ageFlags: true,              // 🇺🇸 PG-13 vs US PG-13
   placement: 'top',            // rows above ('top') or below ('bottom') Genres/Cast/Directors
-  chipLinks: 'stay',           // 'stay' (click does nothing) | 'external' (opens the source site
-                               // inside Stremio's window: Stremio gives chips no target=_blank)
   sectionTitle: 'Ratings',
   ageSectionTitle: 'Age Rating',
   imdbBadge: true,             // refresh the IMDb badge next to the year with MDBList's value
@@ -36,7 +34,6 @@ const ENUMS = {
   nameStyle: ['full', 'short', 'none'],
   markers: ['icons', 'squares', 'circles', 'none'],
   placement: ['top', 'bottom'],
-  chipLinks: ['stay', 'external'],
 };
 
 function encodeConfig(cfg) {

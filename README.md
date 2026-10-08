@@ -32,9 +32,10 @@ Limits that follow from this:
 
 - **Icons are emoji.** Chips are plain text, and only the IMDb badge gets a real logo (Stremio
   hard-codes it).
-- **Chips can't open in your browser.** Stremio renders them as links without `target="_blank"`
-  (`MetaLinks.js`), so external URLs replace the Stremio window. By default chips point to the
-  title's own page (a no-op); the "Clicking a chip" option switches to source-site links.
+- **Chips open inside the Stremio window.** Clicking one shows the source site through Stremio's
+  external-link warning page. Stremio renders chips without `target="_blank"` (`MetaLinks.js`), so
+  an addon can't make them open in your browser. Pointing them at Stremio's own routes instead
+  (e.g. the title's page) freezes the app, so that isn't offered.
 - **The addon must be above Cinemeta.** Stremio requests meta from every addon and shows the first
   one *in install order* that has loaded (stremio-core-web `serialize_meta_details.rs`). Cinemeta is
   installed first and can't be moved in the Stremio UI, but the Stremio API can reorder addons. The
