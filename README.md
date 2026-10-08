@@ -75,3 +75,10 @@ Ratings addon. Treat the URL as a secret.
 
 One MDBList request per title per 12 h (plus up to two TMDB requests when age ratings are on).
 Only titles you open are looked up, so normal use stays well inside the free MDBList limit.
+
+## Credits
+
+Inspired by the [Ratings](https://72059fbbd1e5-stremio-addon-ratings.baby-beamup.club/configure/)
+Stremio addon, which shows scores and age ratings at the top of the stream list. Its choice of
+sources (via MDBList and TMDB) and many of its display options shaped this addon's configuration.
+This project is an independent reimplementation that puts the ratings on the detail page instead.
