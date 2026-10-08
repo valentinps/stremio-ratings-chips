@@ -1,0 +1,4 @@
+node_modules/
+beamup.json
+*.log
+.env

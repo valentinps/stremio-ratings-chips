@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ratings Chips – Configure</title>
+<style>
+  :root {
+    --bg: #0f0d1a; --panel: #1a1729; --panel-2: #231f36; --line: #332d4d;
+    --text: #ece9f7; --muted: #9a94b8; --accent: #7b5bf5; --accent-2: #9d85ff;
+    --ok: #3ecf8e; --warn: #f5b84b; --err: #f06a6a;
+    --stremio-bg: #2a0d16; --chip: rgba(255,255,255,0.08);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 16px 80px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: 28px; align-items: start; }
+  @media (max-width: 980px) { .wrap { grid-template-columns: 1fr; } .preview-col { position: static !important; } }
+  header { grid-column: 1 / -1; }
+  h1 { margin: 0 0 4px; font-size: 26px; }
+  h2 { margin: 0 0 14px; font-size: 16px; letter-spacing: .02em; }
+  p.lead { margin: 0; color: var(--muted); max-width: 760px; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 18px; }
+  .step { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); font-size: 13px; margin-right: 8px; }
+  label.field { display: block; margin-bottom: 14px; }
+  label.field > span { display: block; font-size: 13px; color: var(--muted); margin-bottom: 5px; }
+  input[type=text], input[type=password], input[type=email], select {
+    width: 100%; background: var(--panel-2); color: var(--text); border: 1px solid var(--line);
+    border-radius: 8px; padding: 9px 11px; font: inherit;
+  }
+  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+  .toggle { display: flex; align-items: center; gap: 10px; margin: 8px 0; cursor: pointer; }
+  .toggle input { width: 18px; height: 18px; accent-color: var(--accent); }
+  .hint { font-size: 13px; color: var(--muted); margin: 4px 0 0; }
+  .hint a, .lead a { color: var(--accent-2); }
+  button, .btn {
+    display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 8px; cursor: pointer;
+    background: var(--accent); color: #fff; padding: 9px 14px; font: inherit; font-weight: 600; text-decoration: none;
+  }
+  button.secondary, .btn.secondary { background: var(--panel-2); border: 1px solid var(--line); color: var(--text); font-weight: 500; }
+  button:disabled { opacity: .5; cursor: default; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .status { font-size: 13px; margin-top: 10px; min-height: 20px; }
+  .status.ok { color: var(--ok); } .status.err { color: var(--err); } .status.warn { color: var(--warn); }
+
+  .sources { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .sources li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--panel-2); border-bottom: 1px solid var(--line); }
+  .sources li:last-child { border-bottom: 0; }
+  .sources li.off { opacity: .55; }
+  .sources .name { flex: 1; }
+  .sources .emoji { width: 22px; text-align: center; }
+  .sources button { padding: 3px 8px; background: transparent; border: 1px solid var(--line); color: var(--muted); font-weight: 400; }
+
+  .url-box { font-family: ui-monospace, Consolas, monospace; font-size: 12px; word-break: break-all; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px; color: var(--muted); }
+  .warn-box { border-left: 3px solid var(--warn); background: rgba(245,184,75,.08); padding: 10px 12px; border-radius: 6px; font-size: 14px; margin: 10px 0; }
+  details summary { cursor: pointer; color: var(--accent-2); margin: 6px 0; }
+
+  /* Preview: a lookalike of the Stremio desktop detail page */
+  .preview-col { position: sticky; top: 16px; }
+  .stremio { background: linear-gradient(160deg, #4a1222, var(--stremio-bg) 70%); border-radius: 14px; padding: 22px 22px 26px; min-height: 360px; border: 1px solid var(--line); }
+  .stremio .title { font-size: 28px; font-weight: 800; letter-spacing: .02em; margin-bottom: 14px; }
+  .stremio .info { display: flex; gap: 22px; align-items: center; font-weight: 600; margin-bottom: 16px; }
+  .imdb-badge { display: inline-flex; align-items: center; gap: 7px; }
+  .imdb-logo { background: #f5c518; color: #000; font-weight: 900; font-size: 11px; padding: 1px 4px; border-radius: 3px; }
+  .stremio .group-label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.45); text-transform: uppercase; margin: 14px 0 7px; letter-spacing: .03em; }
+  .stremio .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .stremio .chip { background: var(--chip); border-radius: 999px; padding: 6px 14px; font-size: 14px; white-space: nowrap; }
+  .stremio .desc { margin-top: 14px; font-size: 13px; color: rgba(255,255,255,.85); white-space: pre-line; }
+  .stremio .stream { margin-top: 16px; display: flex; gap: 14px; background: rgba(255,255,255,.06); border-radius: 10px; padding: 10px 12px; font-size: 13px; }
+  .stremio .stream .sname { white-space: pre-line; font-weight: 700; min-width: 64px; }
+  .stremio .stream .sdesc { white-space: pre-line; }
+  .preview-head { display: flex; gap: 8px; margin-bottom: 10px; }
+  .preview-head select { flex: 1; }
+  .preview-msg { font-size: 13px; color: var(--muted); margin-top: 8px; min-height: 20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Ratings Chips for Stremio</h1>
+    <p class="lead">Adds Rotten Tomatoes, Metacritic, Letterboxd, Trakt… scores and age ratings as a row of chips on the movie/series
+      page, next to Genres and Cast. Stremio only shows one addon's metadata per title, so this addon has to be <b>above Cinemeta</b>
+      in your addon order. Step 4 does that for you.</p>
+  </header>
+
+  <div>
+    <section>
+      <h2><span class="step">1</span>API keys</h2>
+      <label class="field"><span>MDBList API key (required, used for scores). Free at <a href="https://mdblist.com/preferences/" target="_blank" rel="noopener">mdblist.com/preferences</a></span>
+        <input type="password" id="mdblistKey" autocomplete="off" spellcheck="false" placeholder="Paste your MDBList API key"></label>
+      <label class="field"><span>TMDB API key or read access token (optional, used for age ratings in several countries). Free at <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">themoviedb.org/settings/api</a></span>
+        <input type="password" id="tmdbKey" autocomplete="off" spellcheck="false" placeholder="Paste your TMDB API key"></label>
+      <div class="actions"><button class="secondary" id="checkKeys" type="button">Check keys</button></div>
+      <div class="status" id="keyStatus"></div>
+    </section>
+
+    <section>
+      <h2><span class="step">2</span>Scores</h2>
+      <p class="hint" style="margin:0 0 10px">Tick the scores to show and use the arrows to set their order.</p>
+      <ul class="sources" id="sources"></ul>
+      <div class="row" style="margin-top:16px">
+        <label class="field"><span>Label</span>
+          <select id="nameStyle">
+            <option value="short">Short name (🍅 RT 89%)</option>
+            <option value="full">Full name (🍅 Rotten Tomatoes 89%)</option>
+            <option value="none">Icon only (🍅 89%)</option>
+          </select></label>
+        <label class="field"><span>Marker</span>
+          <select id="markers">
+            <option value="icons">Source icons (🍅 🍿 Ⓜ️)</option>
+            <option value="squares">Color by score (🟩 🟨 🟥)</option>
+            <option value="circles">Color by score (🟢 🟡 🔴)</option>
+            <option value="none">None</option>
+          </select></label>
+        <label class="field"><span>Values</span>
+          <select id="valueStyle">
+            <option value="native">Native scale (6.9 · 3.5 · 89%)</option>
+            <option value="percent">Everything out of 100 (69 · 70 · 89)</option>
+          </select></label>
+        <label class="field"><span>Row title</span>
+          <input type="text" id="sectionTitle" maxlength="40"></label>
+      </div>
+      <label class="toggle"><input type="checkbox" id="overall"> Overall score (average of the shown scores)</label>
+      <label class="toggle"><input type="checkbox" id="percentSymbol"> Show % symbol</label>
+      <label class="toggle"><input type="checkbox" id="showVotes"> Show vote counts (• 268K)</label>
+      <label class="toggle"><input type="checkbox" id="showUnavailable"> Show sources without a score (—)</label>
+    </section>
+
+    <section>
+      <h2><span class="step">3</span>Age ratings &amp; extras</h2>
+      <div class="row">
+        <label class="field"><span>Age rating countries (comma separated, max 5, empty = off)</span>
+          <input type="text" id="ageRatings" placeholder="US, FR"></label>
+        <label class="field"><span>Age rating row title</span>
+          <input type="text" id="ageSectionTitle" maxlength="40"></label>
+      </div>
+      <p class="hint" style="margin:-6px 0 8px">Without a TMDB key only MDBList's single (usually US) rating is available.</p>
+      <label class="toggle"><input type="checkbox" id="ageFlags"> Show country flags (🇺🇸 PG-13)</label>
+      <label class="field" style="margin-top:12px"><span>Position of the rows</span>
+        <select id="placement">
+          <option value="top">Above Genres / Cast / Directors</option>
+          <option value="bottom">Below Genres / Cast / Directors</option>
+        </select></label>
+      <label class="toggle"><input type="checkbox" id="imdbBadge"> Refresh the IMDb badge (next to the year) with MDBList's up-to-date value</label>
+      <label class="toggle"><input type="checkbox" id="description"> Also add a one-line summary at the top of the description</label>
+      <label class="toggle"><input type="checkbox" id="streamRow"> Also add a ratings entry at the top of the stream list (like the original Ratings addon)</label>
+      <details>
+        <summary>Advanced</summary>
+        <label class="field"><span>Base metadata addon URL (whose metadata gets the ratings added). Default is Cinemeta. Set it to another meta addon's URL if you use one (e.g. a TMDB metadata addon), without /manifest.json.</span>
+          <input type="text" id="baseMeta" spellcheck="false"></label>
+      </details>
+    </section>
+
+    <section>
+      <h2><span class="step">4</span>Install</h2>
+      <div id="httpsWarn" class="warn-box" hidden>This page is served over plain HTTP from a non-local address. Stremio only accepts
+        <b>HTTPS</b> addons (or <code>http://127.0.0.1</code>), so host it behind HTTPS before installing.</div>
+      <div class="url-box" id="manifestUrl">Enter your MDBList key first.</div>
+      <div class="actions">
+        <a class="btn" id="installApp" href="#">Install in Stremio app</a>
+        <a class="btn secondary" id="installWeb" href="#" target="_blank" rel="noopener">Install on web.stremio.com</a>
+        <button class="secondary" id="copyUrl" type="button">Copy URL</button>
+      </div>
+      <div id="localHint" class="warn-box" hidden>Running locally over <code>http://</code>: Stremio's one-click install links always
+        switch to <code>https://</code> and drop the port, so they can't reach this server. Instead either
+        <b>copy the URL</b> and paste it into the search box on Stremio's <b>Addons</b> page, or just use
+        <b>Install &amp; move above Cinemeta</b> below, which installs it directly.</div>
+      <p class="hint">The URL contains your API keys. Don't share it.</p>
+
+      <h2 style="margin-top:22px">Move it above Cinemeta</h2>
+      <p class="hint" style="margin-top:0">Stremio's UI can't reorder addons, but its API can. This logs in to <code>api.strem.io</code>
+        <b>directly from your browser</b> (nothing goes through this addon's server), installs this addon if needed and moves it to the top.
+        Restart Stremio (or reload web.stremio.com) afterwards.</p>
+      <div class="row">
+        <label class="field"><span>Stremio email</span><input type="email" id="stEmail" autocomplete="username"></label>
+        <label class="field"><span>Password</span><input type="password" id="stPassword" autocomplete="current-password"></label>
+      </div>
+      <details>
+        <summary>Signed in with Google/Facebook? Use an auth key instead</summary>
+        <p class="hint">Open <a href="https://web.stremio.com" target="_blank" rel="noopener">web.stremio.com</a> while logged in, open the browser console (F12) and run
+          <code>JSON.parse(localStorage.getItem("profile")).auth.key</code>. Paste the result here.</p>
+        <label class="field"><span>Auth key</span><input type="password" id="stAuthKey" autocomplete="off" spellcheck="false"></label>
+      </details>
+      <div class="actions"><button id="reorder" type="button">Install &amp; move above Cinemeta</button></div>
+      <div class="status" id="reorderStatus"></div>
+    </section>
+  </div>
+
+  <div class="preview-col">
+    <div class="preview-head">
+      <select id="previewTitle">
+        <option value="movie|tt7798634">Ready or Not (2019)</option>
+        <option value="movie|tt0073195">Jaws (1975)</option>
+        <option value="movie|tt15239678">Dune: Part Two (2024)</option>
+        <option value="series|tt0903747">Breaking Bad (series)</option>
+        <option value="series|tt0388629">One Piece (anime)</option>
+      </select>
+      <button class="secondary" id="refreshPreview" type="button">Refresh</button>
+    </div>
+    <div class="stremio" id="preview"><div class="preview-msg">Enter your MDBList key to see a live preview.</div></div>
+    <div class="preview-msg" id="previewMsg"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const DEFAULTS = {
+    mdblistKey: '', tmdbKey: '',
+    sources: ['imdb', 'tomatoes', 'popcorn', 'metacritic', 'letterboxd', 'trakt'],
+    overall: true, valueStyle: 'native', percentSymbol: true, nameStyle: 'short', markers: 'icons',
+    showVotes: false, showUnavailable: false, ageRatings: ['US'], ageFlags: true, placement: 'top',
+    sectionTitle: 'Ratings', ageSectionTitle: 'Age Rating', imdbBadge: true, description: false,
+    streamRow: false, baseMeta: 'https://v3-cinemeta.strem.io',
+  };
+  const SOURCES = [
+    ['imdb', '🟨', 'IMDb'], ['tomatoes', '🍅', 'Rotten Tomatoes'], ['popcorn', '🍿', 'Popcornmeter (RT audience)'],
+    ['metacritic', 'Ⓜ️', 'Metacritic'], ['metacriticuser', '👥', 'Metacritic User'], ['letterboxd', '🟢', 'Letterboxd'],
+    ['trakt', '🔴', 'Trakt'], ['tmdb', '🎬', 'TMDB'], ['rogerebert', '👍', 'Roger Ebert'],
+    ['myanimelist', '📘', 'MyAnimeList'], ['mdblist', '📊', 'MDBList score'],
+  ];
+  const ADDON_ID = 'community.ratings-chips';
+  const $ = (id) => document.getElementById(id);
+  const b64url = {
+    enc: (obj) => btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(obj)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''),
+    dec: (str) => {
+      const bin = atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0))));
+    },
+  };
+
+  // Load the existing config when opened from Stremio's gear icon (/<config>/configure).
+  let cfg = { ...DEFAULTS };
+  const segs = location.pathname.split('/').filter(Boolean);
+  if (segs.length === 2 && segs[1] === 'configure') {
+    try { cfg = { ...DEFAULTS, ...b64url.dec(segs[0]) }; } catch { /* ignore */ }
+  }
+  // Order of the source list: enabled ones first in the user's order, then the rest.
+  let order = [...cfg.sources, ...SOURCES.map((s) => s[0]).filter((id) => !cfg.sources.includes(id))];
+  let enabled = new Set(cfg.sources);
+
+  const textFields = ['mdblistKey', 'tmdbKey', 'sectionTitle', 'ageSectionTitle', 'baseMeta'];
+  const selectFields = ['nameStyle', 'markers', 'valueStyle', 'placement'];
+  const boolFields = ['overall', 'percentSymbol', 'showVotes', 'showUnavailable', 'ageFlags', 'imdbBadge', 'description', 'streamRow'];
+
+  for (const f of [...textFields, ...selectFields]) $(f).value = cfg[f];
+  for (const f of boolFields) $(f).checked = !!cfg[f];
+  $('ageRatings').value = (cfg.ageRatings || []).join(', ');
+
+  function renderSources() {
+    const ul = $('sources');
+    ul.innerHTML = '';
+    order.forEach((id, i) => {
+      const [, emoji, name] = SOURCES.find((s) => s[0] === id);
+      const li = document.createElement('li');
+      li.className = enabled.has(id) ? '' : 'off';
+      li.innerHTML = `<input type="checkbox" ${enabled.has(id) ? 'checked' : ''}>
+        <span class="emoji">${emoji}</span><span class="name">${name}</span>
+        <button type="button" title="Move up" ${i === 0 ? 'disabled' : ''}>▲</button>
+        <button type="button" title="Move down" ${i === order.length - 1 ? 'disabled' : ''}>▼</button>`;
+      const [box, up, down] = li.querySelectorAll('input, button');
+      box.onchange = () => { box.checked ? enabled.add(id) : enabled.delete(id); renderSources(); changed(); };
+      up.onclick = () => { [order[i - 1], order[i]] = [order[i], order[i - 1]]; renderSources(); changed(); };
+      down.onclick = () => { [order[i + 1], order[i]] = [order[i], order[i + 1]]; renderSources(); changed(); };
+      ul.appendChild(li);
+    });
+  }
+
+  function readConfig() {
+    const out = {};
+    for (const f of textFields) out[f] = $(f).value.trim();
+    for (const f of selectFields) out[f] = $(f).value;
+    for (const f of boolFields) out[f] = $(f).checked;
+    out.sources = order.filter((id) => enabled.has(id));
+    out.ageRatings = $('ageRatings').value.split(/[\s,;]+/).map((s) => s.trim().toUpperCase()).filter((s) => /^[A-Z]{2}$/.test(s));
+    if (!out.baseMeta) out.baseMeta = DEFAULTS.baseMeta;
+    // Keep the URL short: only store values that differ from the defaults (keys always).
+    for (const k of Object.keys(out)) {
+      if (k !== 'mdblistKey' && JSON.stringify(out[k]) === JSON.stringify(DEFAULTS[k])) delete out[k];
+    }
+    if (!out.tmdbKey) delete out.tmdbKey;
+    return out;
+  }
+
+  // Stremio accepts plain http only from 127.0.0.1, not "localhost".
+  const origin = location.origin.replace('//localhost', '//127.0.0.1');
+  const manifestUrl = () => `${origin}/${b64url.enc(readConfig())}/manifest.json`;
+
+  function updateInstall() {
+    const ready = !!$('mdblistKey').value.trim();
+    const url = manifestUrl();
+    $('manifestUrl').textContent = ready ? url : 'Enter your MDBList key first.';
+    $('installApp').href = ready ? url.replace(/^https?:/, 'stremio:') : '#';
+    $('installWeb').href = ready ? `https://web.stremio.com/#/addons?addon=${encodeURIComponent(url)}` : '#';
+    for (const el of ['installApp', 'installWeb', 'copyUrl', 'reorder']) $(el).toggleAttribute('disabled', !ready);
+    $('installApp').style.pointerEvents = $('installWeb').style.pointerEvents = ready ? '' : 'none';
+  }
+  const local = ['127.0.0.1', 'localhost'].includes(location.hostname);
+  const https = location.protocol === 'https:';
+  $('httpsWarn').hidden = https || local;
+  // stremio:// links are rewritten by Stremio to https://<hostname><path> (port dropped),
+  // so the one-click buttons only work when this page is served over https on port 443.
+  const oneClick = https && !location.port;
+  $('localHint').hidden = oneClick || !local;
+  $('installApp').hidden = $('installWeb').hidden = !oneClick;
+
+  // ---------- live preview ----------
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let previewTimer, previewSeq = 0;
+
+  async function refreshPreview() {
+    const config = readConfig();
+    if (!config.mdblistKey) return;
+    const [type, id] = $('previewTitle').value.split('|');
+    const seq = ++previewSeq;
+    $('previewMsg').textContent = 'Loading…';
+    try {
+      const res = await fetch('/api/preview', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ config, type, id }) });
+      const data = await res.json();
+      if (seq !== previewSeq) return;
+      if (!data.meta) throw new Error(data.err || 'No metadata');
+      renderPreview(data.meta, data.stream);
+      $('previewMsg').textContent = data.errors && data.errors.length ? `⚠ ${data.errors.join(' · ')}` : 'Preview of the Stremio desktop detail page.';
+    } catch (err) {
+      if (seq === previewSeq) $('previewMsg').textContent = `⚠ ${err.message}`;
+    }
+  }
+
+  // Mirrors stremio-web's MetaPreview: rows grouped by category in order of first
+  // appearance, skipping imdb/share/Writers.
+  function renderPreview(meta, stream) {
+    const groups = new Map();
+    let imdb = null;
+    for (const l of meta.links || []) {
+      if (l.category === 'imdb') { imdb = l.name; continue; }
+      if (l.category === 'share' || l.category === 'Writers') continue;
+      if (!groups.has(l.category)) groups.set(l.category, []);
+      groups.get(l.category).push(l.name);
+    }
+    let html = `<div class="title">${esc(meta.name)}</div><div class="info">`;
+    if (meta.runtime) html += `<span>${esc(meta.runtime)}</span>`;
+    if (meta.releaseInfo) html += `<span>${esc(meta.releaseInfo)}</span>`;
+    if (imdb) html += `<span class="imdb-badge">${esc(imdb)} <span class="imdb-logo">IMDb</span></span>`;
+    html += '</div>';
+    for (const [cat, names] of groups) {
+      html += `<div class="group-label">${esc(cat)}</div><div class="chips">${names.map((n) => `<span class="chip">${esc(n)}</span>`).join('')}</div>`;
+    }
+    if (meta.description) html += `<div class="group-label">Summary</div><div class="desc">${esc(meta.description)}</div>`;
+    if (stream) html += `<div class="group-label">Streams</div><div class="stream"><div class="sname">${esc(stream.name)}</div><div class="sdesc">${esc(stream.description)}</div></div>`;
+    $('preview').innerHTML = html;
+  }
+
+  function changed() {
+    updateInstall();
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(refreshPreview, 500);
+  }
+
+  document.querySelectorAll('input, select').forEach((el) => {
+    if (el.closest('.sources') || el.id.startsWith('st')) return;
+    el.addEventListener(el.type === 'text' || el.type === 'password' ? 'input' : 'change', changed);
+  });
+  $('refreshPreview').onclick = refreshPreview;
+
+  // ---------- key check ----------
+  $('checkKeys').onclick = async () => {
+    const s = $('keyStatus');
+    s.className = 'status'; s.textContent = 'Checking…';
+    try {
+      const res = await fetch('/api/check', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ config: readConfig() }) });
+      const r = await res.json();
+      const parts = [`MDBList: ${r.mdblist.ok ? '✓ OK' : `✗ ${r.mdblist.error}`}`];
+      if (r.tmdb) parts.push(`TMDB: ${r.tmdb.ok ? '✓ OK' : `✗ ${r.tmdb.error}`}`);
+      s.textContent = parts.join('   ');
+      s.className = 'status ' + (r.mdblist.ok && (!r.tmdb || r.tmdb.ok) ? 'ok' : 'err');
+    } catch (err) {
+      s.className = 'status err'; s.textContent = err.message;
+    }
+  };
+
+  $('copyUrl').onclick = async () => {
+    try { await navigator.clipboard.writeText(manifestUrl()); $('copyUrl').textContent = 'Copied ✓'; }
+    catch { $('copyUrl').textContent = 'Copy failed. Select the URL above'; }
+    setTimeout(() => { $('copyUrl').textContent = 'Copy URL'; }, 2000);
+  };
+
+  // ---------- reorder via the Stremio API (browser -> api.strem.io directly) ----------
+  async function stremioApi(method, body) {
+    const res = await fetch(`https://api.strem.io/api/${method}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    return data.result;
+  }
+
+  $('reorder').onclick = async () => {
+    const s = $('reorderStatus');
+    const say = (msg, cls = '') => { s.className = 'status ' + cls; s.textContent = msg; };
+    if (!local && location.protocol !== 'https:') return say('Stremio needs this addon to be served over HTTPS.', 'err');
+    const btn = $('reorder');
+    btn.disabled = true;
+    try {
+      let authKey = $('stAuthKey').value.trim().replace(/^"|"$/g, '');
+      if (!authKey) {
+        const email = $('stEmail').value.trim(), password = $('stPassword').value;
+        if (!email || !password) throw new Error('Enter your Stremio email and password (or an auth key).');
+        say('Logging in…');
+        authKey = (await stremioApi('login', { type: 'Login', email, password, facebook: false })).authKey;
+      }
+      say('Reading your addons…');
+      const { addons } = await stremioApi('addonCollectionGet', { type: 'AddonCollectionGet', authKey, update: true });
+
+      const transportUrl = manifestUrl();
+      const manifest = await (await fetch(transportUrl)).json();
+      // Drop any previous copy of this addon (e.g. installed with an older config).
+      const others = addons.filter((a) => !(a.manifest && a.manifest.id === ADDON_ID));
+      const ours = { transportUrl, transportName: '', manifest, flags: { official: false, protected: false } };
+      const next = [ours, ...others];
+
+      say('Saving new order…');
+      await stremioApi('addonCollectionSet', { type: 'AddonCollectionSet', authKey, addons: next });
+      say(`Done ✓ "Ratings Chips" is now first, above ${others[0] ? others[0].manifest.name : 'everything else'}. Restart Stremio to see it.`, 'ok');
+      $('stPassword').value = '';
+    } catch (err) {
+      say(`✗ ${err.message}`, 'err');
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  renderSources();
+  updateInstall();
+  if (cfg.mdblistKey) refreshPreview();
+  $('previewTitle').onchange = refreshPreview;
+})();
+</script>
+</body>
+</html>

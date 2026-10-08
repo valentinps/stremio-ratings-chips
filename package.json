@@ -1,0 +1,14 @@
+{
+  "name": "stremio-ratings-chips",
+  "version": "1.0.0",
+  "description": "Stremio addon that shows Rotten Tomatoes, Metacritic, Letterboxd, Trakt… ratings directly on the movie/series detail page.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
