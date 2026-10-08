@@ -20,7 +20,7 @@ function manifest(cfg) {
     id: 'community.ratings-chips',
     version: pkg.version,
     name: 'Ratings Chips',
-    description: 'Shows Rotten Tomatoes, Metacritic, Letterboxd, Trakt… scores and age ratings on the movie/series page. Must be placed ABOVE Cinemeta in your addon order.',
+    description: 'Shows Rotten Tomatoes, Metacritic, Letterboxd, Trakt… scores and age ratings on the movie/series page. Must be placed ABOVE Cinemeta in your addon order. Made with AI (Claude Code). Source code (MIT): https://github.com/valentinps/stremio-ratings-chips',
     types: ['movie', 'series'],
     catalogs: [],
     resources,

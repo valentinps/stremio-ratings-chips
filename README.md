@@ -15,6 +15,13 @@ GENRES
  Action   Comedy   Horror
 ```
 
+**Install:** open the [configure page](https://7de4c93a7681-stremio-ratings-chips.baby-beamup.club/configure),
+add your free MDBList key (and optionally a TMDB key), then follow the steps on the page.
+
+> **Made with AI.** This addon was written with Claude Code, an AI coding assistant, and tested in
+> Stremio by its author. The full source is here so anyone can check what it does
+> with their API keys and Stremio login before using it.
+
 ## How it works (and what Stremio allows)
 
 Addons cannot inject custom UI, HTML or images into Stremio. What they *can* do is supply the
@@ -82,3 +89,7 @@ Inspired by the [Ratings](https://72059fbbd1e5-stremio-addon-ratings.baby-beamup
 Stremio addon, which shows scores and age ratings at the top of the stream list. Its choice of
 sources (via MDBList and TMDB) and many of its display options shaped this addon's configuration.
 This project is an independent reimplementation that puts the ratings on the detail page instead.
+
+## License
+
+[MIT](LICENSE)
