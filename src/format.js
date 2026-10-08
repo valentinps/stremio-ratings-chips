@@ -125,6 +125,11 @@ function buildRatingLinks(data, cfg) {
 function decorateMeta(baseMeta, data, cfg) {
   const meta = { ...baseMeta };
   const ours = [...buildRatingLinks(data, cfg), ...buildAgeLinks(data, cfg)];
+  if (cfg.chipLinks === 'stay') {
+    // Stremio opens chip links inside its own window (no target=_blank), so by default
+    // point them at this title's own page: an internal route Stremio allows, i.e. a no-op.
+    for (const l of ours) l.url = `stremio:///detail/${data.type}/${data.imdbId}`;
+  }
   // Copy the links: `baseMeta` comes from the cache and must not be mutated.
   let existing = Array.isArray(meta.links) ? meta.links.map((l) => ({ ...l })) : [];
 

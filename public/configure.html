@@ -143,6 +143,12 @@
           <option value="top">Above Genres / Cast / Directors</option>
           <option value="bottom">Below Genres / Cast / Directors</option>
         </select></label>
+      <label class="field"><span>Clicking a chip</span>
+        <select id="chipLinks">
+          <option value="stay">Does nothing (stays on the page)</option>
+          <option value="external">Opens the source site, inside the Stremio window</option>
+        </select></label>
+      <p class="hint" style="margin:-6px 0 10px">Stremio doesn't let addons open chips in your browser. Only the IMDb badge does that.</p>
       <label class="toggle"><input type="checkbox" id="imdbBadge"> Refresh the IMDb badge (next to the year) with MDBList's up-to-date value</label>
       <label class="toggle"><input type="checkbox" id="description"> Also add a one-line summary at the top of the description</label>
       <label class="toggle"><input type="checkbox" id="streamRow"> Also add a ratings entry at the top of the stream list (like the original Ratings addon)</label>
@@ -210,7 +216,7 @@
     mdblistKey: '', tmdbKey: '',
     sources: ['imdb', 'tomatoes', 'popcorn', 'metacritic', 'letterboxd', 'trakt'],
     overall: true, valueStyle: 'native', percentSymbol: true, nameStyle: 'short', markers: 'icons',
-    showVotes: false, showUnavailable: false, ageRatings: ['US'], ageFlags: true, placement: 'top',
+    showVotes: false, showUnavailable: false, ageRatings: ['US'], ageFlags: true, placement: 'top', chipLinks: 'stay',
     sectionTitle: 'Ratings', ageSectionTitle: 'Age Rating', imdbBadge: true, description: false,
     streamRow: false, baseMeta: 'https://v3-cinemeta.strem.io',
   };
@@ -241,7 +247,7 @@
   let enabled = new Set(cfg.sources);
 
   const textFields = ['mdblistKey', 'tmdbKey', 'sectionTitle', 'ageSectionTitle', 'baseMeta'];
-  const selectFields = ['nameStyle', 'markers', 'valueStyle', 'placement'];
+  const selectFields = ['nameStyle', 'markers', 'valueStyle', 'placement', 'chipLinks'];
   const boolFields = ['overall', 'percentSymbol', 'showVotes', 'showUnavailable', 'ageFlags', 'imdbBadge', 'description', 'streamRow'];
 
   for (const f of [...textFields, ...selectFields]) $(f).value = cfg[f];

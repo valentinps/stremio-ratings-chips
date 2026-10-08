@@ -31,7 +31,10 @@ component as Genres and Cast. This addon:
 Limits that follow from this:
 
 - **Icons are emoji.** Chips are plain text, and only the IMDb badge gets a real logo (Stremio
-  hard-codes it). Clicking a chip opens the source page (via Stremio's external-link warning).
+  hard-codes it).
+- **Chips can't open in your browser.** Stremio renders them as links without `target="_blank"`
+  (`MetaLinks.js`), so external URLs replace the Stremio window. By default chips point to the
+  title's own page (a no-op); the "Clicking a chip" option switches to source-site links.
 - **The addon must be above Cinemeta.** Stremio requests meta from every addon and shows the first
   one *in install order* that has loaded (stremio-core-web `serialize_meta_details.rs`). Cinemeta is
   installed first and can't be moved in the Stremio UI, but the Stremio API can reorder addons. The
