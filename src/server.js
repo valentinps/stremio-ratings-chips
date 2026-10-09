@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { decodeConfig, normalizeConfig, DEFAULTS } = require('./config');
 const { getTitleData, fetchBaseMeta, fetchMdblist, fetchAgeRatings } = require('./providers');
-const { decorateMeta, buildStream } = require('./format');
+const { decorateMeta, buildStream, formatRuntime } = require('./format');
 const pkg = require('../package.json');
 
 const PORT = Number(process.env.PORT) || 7000;
@@ -77,7 +77,8 @@ async function handleMeta(cfg, type, id) {
   if (!base) return { status: 404, body: { err: 'not found' } };
   if (!data) {
     console.warn(`[meta] ratings for ${imdbId} took longer than ${RATINGS_DEADLINE_MS}ms`);
-    return { status: 200, body: { meta: base }, cache: 60 };
+    const meta = base.runtime ? { ...base, runtime: formatRuntime(base.runtime) } : base;
+    return { status: 200, body: { meta }, cache: 60 };
   }
   logErrors('meta', data.errors);
   return { status: 200, body: { meta: decorateMeta(base, data, cfg) }, cache: data.errors.length ? 300 : 3600 };

@@ -119,9 +119,21 @@ function buildRatingLinks(data, cfg) {
   return all.map((e) => ({ name: chipLabel(e, cfg), category: cfg.sectionTitle, url: e.url }));
 }
 
+// Cinemeta gives runtimes as "148 min"; show them as "2h 28min" like AIO Metadata does.
+function formatRuntime(runtime) {
+  const m = /^\s*(\d+)\s*min\s*$/i.exec(String(runtime || ''));
+  if (!m) return runtime;
+  const total = Number(m[1]);
+  const h = Math.floor(total / 60);
+  const min = total % 60;
+  if (!h) return `${min}min`;
+  return min ? `${h}h ${min}min` : `${h}h`;
+}
+
 // Decorates a base meta object (from Cinemeta) with rating/age-rating chips.
 function decorateMeta(baseMeta, data, cfg) {
   const meta = { ...baseMeta };
+  if (meta.runtime) meta.runtime = formatRuntime(meta.runtime);
   const ours = [...buildRatingLinks(data, cfg), ...buildAgeLinks(data, cfg)];
   // Copy the links: `baseMeta` comes from the cache and must not be mutated.
   let existing = Array.isArray(meta.links) ? meta.links.map((l) => ({ ...l })) : [];
@@ -157,4 +169,4 @@ function buildStream(data, cfg) {
   };
 }
 
-module.exports = { decorateMeta, buildStream, buildEntries, buildRatingLinks, scoreOf, formatValue, formatVotes };
+module.exports = { decorateMeta, buildStream, buildEntries, buildRatingLinks, scoreOf, formatValue, formatVotes, formatRuntime };

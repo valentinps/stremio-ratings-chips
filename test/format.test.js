@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const { normalizeConfig, encodeConfig, decodeConfig } = require('../src/config');
-const { decorateMeta, buildStream, buildRatingLinks } = require('../src/format');
+const { decorateMeta, buildStream, buildRatingLinks, formatRuntime } = require('../src/format');
 
 // Ratings as documented in the MDBList API example (Jaws).
 const data = {
@@ -104,4 +104,13 @@ test('stream row', () => {
   assert.ok(s.description.includes('🍅 RT 97%'));
   assert.ok(s.description.includes('🇺🇸 PG'));
   assert.strictEqual(s.externalUrl, 'https://mdblist.com/movie/tt0073195');
+});
+
+test('runtime is shown in hours and minutes', () => {
+  assert.strictEqual(formatRuntime('148 min'), '2h 28min');
+  assert.strictEqual(formatRuntime('120 min'), '2h');
+  assert.strictEqual(formatRuntime('45 min'), '45min');
+  assert.strictEqual(formatRuntime('2h 28min'), '2h 28min');
+  const meta = decorateMeta({ ...baseMeta, runtime: '124 min' }, data, cfg());
+  assert.strictEqual(meta.runtime, '2h 4min');
 });
