@@ -50,11 +50,17 @@ test('default chips: overall first, native values, source icons', () => {
   for (const n of names) assert.ok(!n.includes(':'), 'labels must not contain ":"');
 });
 
-test('percent mode, colour markers, votes, unavailable sources', () => {
+test('percent mode, colour markers, votes', () => {
   const c = cfg({ sources: ['imdb', 'popcorn', 'rogerebert'], valueStyle: 'percent', markers: 'squares',
-    nameStyle: 'full', showVotes: true, showUnavailable: true, overall: false, percentSymbol: false });
+    nameStyle: 'full', showVotes: true, overall: false, percentSymbol: false });
   const names = buildRatingLinks(data, c).map((l) => l.name);
-  assert.deepStrictEqual(names, ['🟩 IMDb 81 • 674K', '⬛ Popcornmeter —', '🟩 Roger Ebert 100']);
+  assert.deepStrictEqual(names, ['🟩 IMDb 81 • 674K', '🟩 Roger Ebert 100']);
+});
+
+test('sources without a score are hidden, even with the old showUnavailable option', () => {
+  const c = cfg({ sources: ['popcorn', 'metacriticuser', 'imdb'], showUnavailable: true, showVotes: true, overall: false });
+  const withVotes = { ...data, ratings: [...data.ratings, { source: 'popcorn', value: null, score: null, votes: 4 }] };
+  assert.deepStrictEqual(buildRatingLinks(withVotes, c).map((l) => l.name), ['🟨 IMDb 8.1 • 674K']);
 });
 
 test('chip links point to the source sites', () => {
@@ -75,8 +81,8 @@ test('decorateMeta inserts rows before Genres, refreshes the IMDb badge, does no
   assert.deepStrictEqual(cats, ['imdb', 'Ratings', 'Age Rating', 'share', 'Genres']);
   assert.deepStrictEqual(meta.links.filter((l) => l.category === 'imdb').map((l) => l.name), ['8.1']);
   assert.deepStrictEqual(meta.links.filter((l) => l.category === 'Age Rating').map((l) => l.name), ['🇺🇸 PG']);
-  assert.ok(meta.description.startsWith('⭐ Overall 85  ·  🟨 IMDb 8.1'));
-  assert.ok(meta.description.endsWith('Shark.'));
+  // The old summary option is ignored: the description is left untouched.
+  assert.strictEqual(meta.description, 'Shark.');
 });
 
 test('placement bottom appends rows after existing ones', () => {

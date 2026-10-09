@@ -32,8 +32,8 @@ component as Genres and Cast. This addon:
 
 1. fetches the normal metadata from Cinemeta (or another meta addon you configure),
 2. fetches scores from MDBList and age ratings from TMDB (cached 12 h, shared between users),
-3. adds them as extra `links` rows (and optionally refreshes the IMDb badge, prefixes the
-   description, or adds a ratings entry at the top of the stream list).
+3. adds them as extra `links` rows (and optionally refreshes the IMDb badge or adds a ratings entry at the top of
+   the stream list).
 
 Limits that follow from this:
 

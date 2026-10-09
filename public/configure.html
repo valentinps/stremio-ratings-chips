@@ -126,7 +126,6 @@
       <label class="toggle"><input type="checkbox" id="overall"> Overall score (average of the shown scores)</label>
       <label class="toggle"><input type="checkbox" id="percentSymbol"> Show % symbol</label>
       <label class="toggle"><input type="checkbox" id="showVotes"> Show vote counts (• 268K)</label>
-      <label class="toggle"><input type="checkbox" id="showUnavailable"> Show sources without a score (—)</label>
     </section>
 
     <section>
@@ -145,7 +144,6 @@
           <option value="bottom">Below Genres / Cast / Directors</option>
         </select></label>
       <label class="toggle"><input type="checkbox" id="imdbBadge"> Refresh the IMDb badge (next to the year) with MDBList's up-to-date value</label>
-      <label class="toggle"><input type="checkbox" id="description"> Also add a one-line summary at the top of the description</label>
       <label class="toggle"><input type="checkbox" id="streamRow"> Also add a ratings entry at the top of the stream list (like the original Ratings addon)</label>
       <details>
         <summary>Advanced</summary>
@@ -211,8 +209,8 @@
     mdblistKey: '', tmdbKey: '',
     sources: ['imdb', 'tomatoes', 'popcorn', 'metacritic', 'letterboxd', 'trakt'],
     overall: true, valueStyle: 'native', percentSymbol: true, nameStyle: 'short', markers: 'icons',
-    showVotes: false, showUnavailable: false, ageRatings: ['US'], ageFlags: true, placement: 'top',
-    sectionTitle: 'Ratings', ageSectionTitle: 'Age Rating', imdbBadge: true, description: false,
+    showVotes: false, ageRatings: ['US'], ageFlags: true, placement: 'top',
+    sectionTitle: 'Ratings', ageSectionTitle: 'Age Rating', imdbBadge: true,
     streamRow: false, baseMeta: 'https://v3-cinemeta.strem.io',
   };
   const SOURCES = [
@@ -243,7 +241,7 @@
 
   const textFields = ['mdblistKey', 'tmdbKey', 'sectionTitle', 'ageSectionTitle', 'baseMeta'];
   const selectFields = ['nameStyle', 'markers', 'valueStyle', 'placement'];
-  const boolFields = ['overall', 'percentSymbol', 'showVotes', 'showUnavailable', 'ageFlags', 'imdbBadge', 'description', 'streamRow'];
+  const boolFields = ['overall', 'percentSymbol', 'showVotes', 'ageFlags', 'imdbBadge', 'streamRow'];
 
   for (const f of [...textFields, ...selectFields]) $(f).value = cfg[f];
   for (const f of boolFields) $(f).checked = !!cfg[f];

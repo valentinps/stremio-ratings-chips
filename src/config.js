@@ -17,14 +17,12 @@ const DEFAULTS = Object.freeze({
   nameStyle: 'short',          // 'full' (Rotten Tomatoes) | 'short' (RT) | 'none'
   markers: 'icons',            // 'icons' (🍅) | 'squares' (🟩🟧🟥) | 'circles' (🟢🟠🔴) | 'none'
   showVotes: false,            // "• 268K" after the score
-  showUnavailable: false,      // keep chips for sources with no score ("RT —")
   ageRatings: ['US'],          // ISO-3166 country codes; [] disables age ratings
   ageFlags: true,              // 🇺🇸 PG-13 vs US PG-13
   placement: 'top',            // rows above ('top') or below ('bottom') Genres/Cast/Directors
   sectionTitle: 'Ratings',
   ageSectionTitle: 'Age Rating',
   imdbBadge: true,             // refresh the IMDb badge next to the year with MDBList's value
-  description: false,          // also prepend a one-line summary to the description
   streamRow: false,            // also add a ratings entry at the top of the stream list
   baseMeta: DEFAULT_BASE_META, // addon whose metadata is decorated (Cinemeta by default)
 });
@@ -62,7 +60,7 @@ function normalizeConfig(raw) {
     // ':' would be read as an i18next namespace separator by Stremio and get swallowed.
     if (typeof raw[key] === 'string' && raw[key].trim()) cfg[key] = raw[key].replace(/:/g, '').trim().slice(0, 40);
   }
-  for (const key of ['overall', 'percentSymbol', 'showVotes', 'showUnavailable', 'ageFlags', 'imdbBadge', 'description', 'streamRow']) {
+  for (const key of ['overall', 'percentSymbol', 'showVotes', 'ageFlags', 'imdbBadge', 'streamRow']) {
     if (typeof raw[key] === 'boolean') cfg[key] = raw[key];
   }
   for (const [key, allowed] of Object.entries(ENUMS)) {

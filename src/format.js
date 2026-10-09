@@ -6,8 +6,8 @@
 const { SOURCES } = require('./sources');
 
 const MARKERS = {
-  squares: ['🟩', '🟨', '🟥', '⬛'],
-  circles: ['🟢', '🟡', '🔴', '⚫'],
+  squares: ['🟩', '🟨', '🟥'],
+  circles: ['🟢', '🟡', '🔴'],
 };
 
 // Normalized 0-100 score. MDBList usually provides `score`, but not for every source
@@ -25,7 +25,6 @@ function formatNumber(n, decimals) {
 }
 
 function formatValue(score, src, cfg) {
-  if (score == null) return '—';
   const pct = cfg.percentSymbol ? '%' : '';
   if (cfg.valueStyle === 'percent') return `${Math.round(score)}${pct}`;
   if (src.percent) return `${Math.round(score)}${pct}`;
@@ -44,8 +43,7 @@ function formatVotes(votes) {
 function marker(score, emoji, cfg) {
   if (cfg.markers === 'none') return '';
   if (cfg.markers === 'icons') return emoji;
-  const [good, mid, bad, none] = MARKERS[cfg.markers];
-  if (score == null) return none;
+  const [good, mid, bad] = MARKERS[cfg.markers];
   return score >= 70 ? good : score >= 50 ? mid : bad;
 }
 
@@ -72,7 +70,7 @@ function buildEntries(data, cfg) {
     const src = SOURCES[id];
     const rating = byId.get(id) || { source: id };
     const score = scoreOf(rating, src);
-    if (score == null && !cfg.showUnavailable) continue;
+    if (score == null) continue; // sources without a score are never shown
     entries.push({
       id,
       score,
@@ -140,15 +138,6 @@ function decorateMeta(baseMeta, data, cfg) {
 
   // Stremio orders link rows by the first appearance of each category.
   meta.links = cfg.placement === 'top' ? [...ours, ...existing] : [...existing, ...ours];
-
-  if (cfg.description) {
-    const { entries, overall } = buildEntries(data, cfg);
-    const line = (overall ? [overall, ...entries] : entries)
-      .filter((e) => e.score != null)
-      .map((e) => chipLabel(e, { ...cfg, showVotes: false }))
-      .join('  ·  ');
-    if (line) meta.description = meta.description ? `${line}\n\n${meta.description}` : line;
-  }
   return meta;
 }
 
